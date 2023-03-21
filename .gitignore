@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+# yaml File
+config/
+*.yaml
+
 # Logs
 logs
 *.log
