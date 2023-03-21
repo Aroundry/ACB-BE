@@ -16,7 +16,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   ssl: {
     ca: fs.readFileSync(process.env.SSL_CA_CERTIFICATES),
   },
-  entities: [__dirname + '/../**/*.entity.{js,ts}', User, Reception],
+  //   entities: [__dirname + '/../**/*.entity.{js,ts}', User, Reception],
   autoLoadEntities: true,
   synchronize: true,
 };
