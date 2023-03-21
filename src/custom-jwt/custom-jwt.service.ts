@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as config from 'config';
 
-// const jwtConfig = config.get('jwt');
+const jwtConfig = config.get('jwt');
 
 @Injectable()
 export class CustomJwtService {
@@ -12,8 +12,8 @@ export class CustomJwtService {
     const token = this.jwtService.sign(
       { userId },
       {
-        secret: process.env.JWT_ACCESS_SECRET,
-        expiresIn: process.env.JWT_ACCESS_EXPIRESIN,
+        secret: process.env.JWT_ACCESS_SECRET || jwtConfig.accessSecret,
+        expiresIn: jwtConfig.accessExpiresIn,
       },
     );
     return token;
@@ -23,8 +23,8 @@ export class CustomJwtService {
     const token = this.jwtService.sign(
       { userId },
       {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: process.env.JWT_REFRESH_EXPIRESIN,
+        secret: process.env.JWT_REFRESH_SECRET || jwtConfig.refreshSecret,
+        expiresIn: jwtConfig.refreshExpiresIn,
       },
     );
     return token;
@@ -32,7 +32,7 @@ export class CustomJwtService {
 
   verifyAccessToken(jwtString: string) {
     const payload = this.jwtService.verify(jwtString, {
-      secret: process.env.JWT_ACCESS_SECRET,
+      secret: process.env.JWT_ACCESS_SECRET || jwtConfig.accessSecret,
     });
     const { userId } = payload;
     return { userId };
@@ -40,7 +40,7 @@ export class CustomJwtService {
 
   verifyRefreshToken(jwtString: string) {
     const payload = this.jwtService.verify(jwtString, {
-      secret: process.env.JWT_REFRESH_SECRET,
+      secret: process.env.JWT_REFRESH_SECRET || jwtConfig.refreshSecret,
     });
     const { userId } = payload;
     return { userId };
