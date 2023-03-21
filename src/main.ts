@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const serverConfig = config.get('server');
-  const port = serverConfig.port;
+  const port = process.env.PORT || serverConfig.port;
 
   app.use(cookieParser());
 
