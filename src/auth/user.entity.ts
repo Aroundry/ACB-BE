@@ -1,9 +1,11 @@
+import { Reception } from 'src/reception/reception.entity';
 import {
   BaseEntity,
   Column,
   PrimaryGeneratedColumn,
   Entity,
   Unique,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -17,4 +19,10 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @OneToMany((type) => Reception, (reception) => reception.user, {
+    eager: true,
+    cascade: true,
+  })
+  receptions: Reception[];
 }
