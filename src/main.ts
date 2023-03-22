@@ -2,13 +2,13 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import * as config from 'config';
+// import * as config from 'config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const serverConfig = config.get('server');
-  const port = process.env.PORT || serverConfig.port;
+  // const serverConfig = config.get('server');
+  const port = process.env.PORT;
 
   app.use(cookieParser());
 

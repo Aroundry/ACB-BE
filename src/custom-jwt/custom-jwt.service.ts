@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as config from 'config';
+// import * as config from 'config';
 
-const jwtConfig = config.get('jwt');
+// const jwtConfig = config.get('jwt');
 
 @Injectable()
 export class CustomJwtService {
@@ -12,7 +12,7 @@ export class CustomJwtService {
     const token = this.jwtService.sign(
       { userId },
       {
-        secret: process.env.JWT_ACCESS_SECRET || jwtConfig.accessSecret,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '1h',
       },
     );
@@ -23,7 +23,7 @@ export class CustomJwtService {
     const token = this.jwtService.sign(
       { userId },
       {
-        secret: process.env.JWT_REFRESH_SECRET || jwtConfig.refreshSecret,
+        secret: process.env.JWT_REFRESH_SECRET,
         expiresIn: '7d',
       },
     );
@@ -32,7 +32,7 @@ export class CustomJwtService {
 
   verifyAccessToken(jwtString: string) {
     const payload = this.jwtService.verify(jwtString, {
-      secret: process.env.JWT_ACCESS_SECRET || jwtConfig.accessSecret,
+      secret: process.env.JWT_ACCESS_SECRET,
     });
     const { userId } = payload;
     return { userId };
@@ -40,7 +40,7 @@ export class CustomJwtService {
 
   verifyRefreshToken(jwtString: string) {
     const payload = this.jwtService.verify(jwtString, {
-      secret: process.env.JWT_REFRESH_SECRET || jwtConfig.refreshSecret,
+      secret: process.env.JWT_REFRESH_SECRET,
     });
     const { userId } = payload;
     return { userId };
