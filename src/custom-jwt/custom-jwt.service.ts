@@ -13,7 +13,7 @@ export class CustomJwtService {
       { userId },
       {
         secret: process.env.JWT_ACCESS_SECRET || jwtConfig.accessSecret,
-        expiresIn: jwtConfig.accessExpiresIn,
+        expiresIn: '1h',
       },
     );
     return token;
@@ -24,7 +24,7 @@ export class CustomJwtService {
       { userId },
       {
         secret: process.env.JWT_REFRESH_SECRET || jwtConfig.refreshSecret,
-        expiresIn: jwtConfig.refreshExpiresIn,
+        expiresIn: '7d',
       },
     );
     return token;
