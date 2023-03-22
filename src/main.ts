@@ -13,6 +13,6 @@ async function bootstrap() {
   app.use(cookieParser());
 
   await app.listen(port);
-  Logger.log(`Application running on port ${port}`);
+  // Logger.log(`Application running on port ${port}`);
 }
 bootstrap();
