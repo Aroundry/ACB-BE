@@ -11,4 +11,7 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   database: process.env.RDS_DB_NAME,
   entities: [User, Reception],
   synchronize: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };
