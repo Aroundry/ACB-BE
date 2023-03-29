@@ -10,10 +10,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AccessGuard } from 'src/guards/access.guard';
-import { RefreshGuard } from 'src/guards/refresh.guard';
+import { AccessGuard } from 'src/common/guards/access.guard';
+import { RefreshGuard } from 'src/common/guards/refresh.guard';
+import { ResponseEntity } from 'src/common/response/response.entity';
 import { AuthService } from './auth.service';
-import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { AuthCredentialsDto } from './dto/request/auth-credential.dto';
+import { LoginUserResponseDto } from './dto/response/login-user.response';
+import { RefreshResponseDto } from './dto/response/refresh.response';
 
 @Controller('auth')
 export class AuthController {
@@ -21,7 +24,9 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto) {
-    return this.authService.signUp(authCredentialsDto);
+    await this.authService.signUp(authCredentialsDto);
+
+    return ResponseEntity.OK();
   }
 
   @Post('/signin')
@@ -29,18 +34,17 @@ export class AuthController {
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.authService.signIn(authCredentialsDto);
+    const data = await this.authService.signIn(authCredentialsDto);
+    const loginUserResponseDto = LoginUserResponseDto.from({
+      accessToken: data.accessToken,
+    });
 
-    res.cookie('accessToken', token.accessToken, {
+    res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30,
     });
-    res.cookie('refreshToken', token.refreshToken, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30,
-    });
 
-    return { token };
+    return ResponseEntity.OK_WITH_DATA(loginUserResponseDto);
   }
 
   @Get('/refresh')
@@ -49,23 +53,18 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(req.cookies['refreshToken']);
-    console.log(req['cookies']['refreshToken']);
     const jwtString = req['cookies']['refreshToken'];
     const { userId } = this.authService.verifyRefreshToken(jwtString);
     const accessToken = await this.authService.getAccessToken(userId);
     const refreshToken = await this.authService.getRefreshToken(userId);
+    const refreshResponseDto = RefreshResponseDto.from({ accessToken });
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 30,
-    });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       maxAge: 60 * 60 * 24 * 30,
     });
 
-    return { statusCode: 200, accessToken, refreshToken };
+    return ResponseEntity.CREATED_WITH_DATA(refreshResponseDto);
   }
 
   @Get('/logout')
@@ -74,13 +73,10 @@ export class AuthController {
     @Param('userId') userId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.cookie('accessToken', {
-      maxAge: 0,
-    });
     res.cookie('refreshToken', {
       maxAge: 0,
     });
 
-    return { statusCode: 200 };
+    return ResponseEntity.OK();
   }
 }

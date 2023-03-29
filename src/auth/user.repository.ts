@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { AuthCredentialsDto } from './dto/request/auth-credential.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 
@@ -26,7 +26,7 @@ export class UserRepository extends Repository<User> {
       await this.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Existing userid');
+        throw new ConflictException('Existing userId');
       } else {
         throw new InternalServerErrorException();
       }

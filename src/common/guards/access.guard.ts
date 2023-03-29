@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { CustomJwtService } from 'src/custom-jwt/custom-jwt.service';
+import { CustomJwtService } from 'src/common/custom-jwt/custom-jwt.service';
 
 @Injectable()
-export class RefreshGuard implements CanActivate {
+export class AccessGuard implements CanActivate {
   constructor(private jwtService: CustomJwtService) {}
 
   canActivate(
@@ -15,12 +15,11 @@ export class RefreshGuard implements CanActivate {
   }
 
   private validateRequest(req: Request) {
-    console.log(req.cookies['refreshToken']);
-    const jwtString = req.cookies['refreshToken'];
+    const jwtString = req.cookies['accessToken'];
     if (!jwtString) {
       return false;
     }
-    this.jwtService.verifyRefreshToken(jwtString);
+    this.jwtService.verifyAccessToken(jwtString);
     return true;
   }
 }

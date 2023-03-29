@@ -7,14 +7,13 @@ import { ReceptionRepository } from './reception.repository';
 @Injectable()
 export class ReceptionService {
   constructor(private receptionRepository: ReceptionRepository) {}
-  async createReception(createReceptionDto: CreateReceptionDto): Promise<void> {
-    return await this.receptionRepository.createReception(createReceptionDto);
+  async createReception(createReceptionDto: CreateReceptionDto) {
+    return this.receptionRepository.createReception(createReceptionDto);
   }
 
-  async getCustomerReception(phoneNumber: string): Promise<Reception[]> {
+  async getCustomerReception(phoneNumber: string) {
     const query = this.receptionRepository.createQueryBuilder('reception');
 
-    console.log(phoneNumber);
     query.where('reception.phone_number = :phoneNumber', {
       phoneNumber: phoneNumber,
     });
@@ -24,7 +23,7 @@ export class ReceptionService {
     return customerReceptions;
   }
 
-  async getReceptionByMaster(masterId: string): Promise<Reception[]> {
+  async getReceptionByMaster(masterId: string) {
     const query = this.receptionRepository.createQueryBuilder('reception');
 
     // status 상태에 따라 하기 위해서는 쿼리문을 status 조건을 추가해줘야함
@@ -51,10 +50,7 @@ export class ReceptionService {
     return foundReception;
   }
 
-  async updateReceptionStatus(
-    receptionId: string,
-    status: ReceptionStatus,
-  ): Promise<Reception> {
+  async updateReceptionStatus(receptionId: string, status: ReceptionStatus) {
     const reception = await this.getReceptionById(receptionId);
 
     reception.status = status;

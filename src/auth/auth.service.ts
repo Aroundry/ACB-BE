@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { AuthCredentialsDto } from './dto/request/auth-credential.dto';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { CustomJwtService } from 'src/custom-jwt/custom-jwt.service';
+import { CustomJwtService } from 'src/common/custom-jwt/custom-jwt.service';
 
 @Injectable()
 export class AuthService {
@@ -12,18 +12,11 @@ export class AuthService {
     private jwtService: CustomJwtService,
   ) {}
 
-  async signUp(
-    authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ statusCode: number; message: string }> {
-    await this.userRepository.createUser(authCredentialsDto);
-    return { statusCode: 200, message: 'login success' };
+  async signUp(authCredentialsDto: AuthCredentialsDto) {
+    return this.userRepository.createUser(authCredentialsDto);
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{
-    statusCode: number;
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async signIn(authCredentialsDto: AuthCredentialsDto) {
     const { userId, password } = authCredentialsDto;
     const user = await this.userRepository.findOne({
       where: { user_id: userId },
@@ -34,7 +27,7 @@ export class AuthService {
     }
     const accessToken = await this.getAccessToken(userId);
     const refreshToken = await this.getRefreshToken(userId);
-    return { statusCode: 200, accessToken, refreshToken };
+    return { accessToken, refreshToken };
 
     // ToDo 추후 Redis 연결시 토큰 캐싱 추가
   }
