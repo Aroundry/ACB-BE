@@ -15,7 +15,7 @@ export class AccessGuard implements CanActivate {
   }
 
   private validateRequest(req: Request) {
-    const jwtString = req.cookies['accessToken'];
+    const jwtString = req.headers.authorization.split('Bearer')[1].trim();
     if (!jwtString) {
       return false;
     }
