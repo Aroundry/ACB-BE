@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-// import * as config from 'config';
-
-// const jwtConfig = config.get('jwt');
 
 @Injectable()
 export class CustomJwtService {
